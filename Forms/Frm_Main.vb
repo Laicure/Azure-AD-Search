@@ -63,12 +63,14 @@ Public Class Frm_Main
 		Try
 			'@@@@@@ search by mail or employee number
 			For x As Integer = 0 To inputLinesCount - 1
+				Dim currentLine As Integer = x
+
 				Lb_Generate.Invoke(DirectCast(
 					Sub()
-						Lb_Generate.Text = "Searching " & (x + 1).ToString("#,0", glob) & "/" & inputLinesCount.ToString("#,0", glob)
+						Lb_Generate.Text = "Searching " & (currentLine + 1).ToString("#,0", glob) & "/" & inputLinesCount.ToString("#,0", glob)
 					End Sub, MethodInvoker))
 
-				Dim strx As String = inputLines(x)
+				Dim strx As String = inputLines(currentLine)
 				Using adSearcher As New DirectorySearcher
 					With adSearcher
 						If Int64.TryParse(strx, Nothing) Then
