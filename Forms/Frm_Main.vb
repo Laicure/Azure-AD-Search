@@ -3,11 +3,13 @@ Imports System.Globalization
 
 Public Class Frm_Main
 
-	Dim inputLines As New HashSet(Of String)
-	Dim outputLines As New HashSet(Of String)
+	Dim inputLines As New List(Of String)
+	Dim outputLines As New List(Of String)
 	Dim errx() As String = {}
 	Dim startExec As DateTime = DateTime.UtcNow
 	Dim glob As CultureInfo = CultureInfo.InvariantCulture
+
+	Dim reInputValid As Boolean = False
 
 	Private Sub Frm_Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		With Me
@@ -22,9 +24,11 @@ Public Class Frm_Main
 	End Sub
 
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
-		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x, Nothing) OrElse x.Contains("@")).Select(Function(x) x.Replace(" ", "")).ToHashSet
+		If reInputValid Then Exit Sub
+
+		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x, Nothing) OrElse x.Contains("@")).Select(Function(x) x.Replace(" ", "")).ToList
 		With Lb_Generate
-			.Enabled = Not inputLines.LongCount = 0
+			.Enabled = Not inputLines.Count = 0
 			.Text = "Search Counterpart"
 		End With
 	End Sub
@@ -33,7 +37,13 @@ Public Class Frm_Main
 		If Not Bg_LDAP.IsBusy Then
 			startExec = DateTime.UtcNow
 
-			Tx_Input.ReadOnly = True
+			reInputValid = True
+			With Tx_Input
+				.Lines = inputLines.ToArray
+				.ReadOnly = True
+			End With
+			reInputValid = False
+
 			Tx_Output.Clear()
 			With Lb_Generate
 				.Enabled = False
@@ -48,16 +58,24 @@ Public Class Frm_Main
 #Region "Background Worker"
 
 	Private Sub Bg_LDAP_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles Bg_LDAP.DoWork
+		Dim inputLinesCount As Integer = inputLines.Count
+
 		Try
 			'@@@@@@ search by mail or employee number
-			For Each str As String In inputLines
+			For x As Integer = 0 To inputLinesCount - 1
+				Lb_Generate.Invoke(DirectCast(
+					Sub()
+						Lb_Generate.Text = "Searching " & (x + 1).ToString("#,0", glob) & "/" & inputLinesCount.ToString("#,0", glob)
+					End Sub, MethodInvoker))
+
+				Dim strx As String = inputLines(x)
 				Using adSearcher As New DirectorySearcher
 					With adSearcher
-						If Int64.TryParse(str, Nothing) Then
-							.Filter = "employeeNumber=" & str
+						If Int64.TryParse(strx, Nothing) Then
+							.Filter = "employeeNumber=" & strx
 							.PropertiesToLoad.Add("mail")
 						Else
-							.Filter = "mail=" & str
+							.Filter = "mail=" & strx
 							.PropertiesToLoad.Add("employeeNumber")
 						End If
 
@@ -65,7 +83,7 @@ Public Class Frm_Main
 						If Not IsNothing(resul) Then
 							Dim user As DirectoryEntry = resul.GetDirectoryEntry
 
-							If Int64.TryParse(str, Nothing) Then
+							If Int64.TryParse(strx, Nothing) Then
 								outputLines.Add(user.Properties("mail").Value.ToString.ToLowerInvariant)
 							Else
 								outputLines.Add(user.Properties("employeeNumber").Value.ToString)
@@ -75,6 +93,7 @@ Public Class Frm_Main
 						End If
 					End With
 				End Using
+
 			Next
 
 			'@@@@@@ search by Identity
