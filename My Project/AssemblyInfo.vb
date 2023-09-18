@@ -9,9 +9,9 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("Azure AD Search")>
 <Assembly: AssemblyDescription("Azure AD email and employee number searcher")>
-<Assembly: AssemblyCompany("CBRE")>
+<Assembly: AssemblyCompany("Laicure")>
 <Assembly: AssemblyProduct("Azure AD Search")>
-<Assembly: AssemblyCopyright("Copyright © CBRE 2023")>
+<Assembly: AssemblyCopyright("Copyright © Laicure 2023")>
 <Assembly: AssemblyTrademark("Laicure")>
 
 <Assembly: ComVisible(False)>
@@ -30,7 +30,7 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("2023.9.18.18590")>
-<Assembly: AssemblyFileVersion("2023.9.18.18590")>
+<Assembly: AssemblyVersion("2023.9.18.19172")>
+<Assembly: AssemblyFileVersion("2023.9.18.19172")>
 
-<Assembly: AssemblyInformationalVersion("2023.9.18.18590")>
+<Assembly: AssemblyInformationalVersion("2023.9.18.19172")>

@@ -78,13 +78,13 @@ Public Class Frm_Main
 			Next
 
 			'@@@@@@ search by Identity
-			'Using ctx As New PrincipalContext(ContextType.Domain, "ap.cbre.net")
-			'	Dim userPrin As UserPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, "LMillares")
+			'Using ctx As New PrincipalContext(ContextType.Domain, "<domain goes here>")
+			'	Dim userPrin As UserPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, "<NT account login>")
 			'	If Not IsNothing(userPrin) Then outputLines.Add(userPrin.Description)
 			'End Using
 
 			'@@@@@@ search all
-			'Using ctx As New PrincipalContext(ContextType.Domain, "ap.cbre.net")
+			'Using ctx As New PrincipalContext(ContextType.Domain, "<domain goes here>")
 			'	Using userPrin As New UserPrincipal(ctx)
 			'		Using sear As New PrincipalSearcher(userPrin)
 			'			For Each domUser As Principal In sear.FindAll
