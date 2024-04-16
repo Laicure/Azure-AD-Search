@@ -41,7 +41,7 @@ Partial Class Frm_Main
         Me.GroupBox1.Location = New System.Drawing.Point(1, 1)
         Me.GroupBox1.Margin = New System.Windows.Forms.Padding(0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(300, 432)
+        Me.GroupBox1.Size = New System.Drawing.Size(275, 432)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Input: Emp ID/Email or Display Name"
@@ -58,7 +58,7 @@ Partial Class Frm_Main
         Me.Tx_Input.Multiline = True
         Me.Tx_Input.Name = "Tx_Input"
         Me.Tx_Input.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Tx_Input.Size = New System.Drawing.Size(294, 410)
+        Me.Tx_Input.Size = New System.Drawing.Size(269, 410)
         Me.Tx_Input.TabIndex = 1
         Me.Tx_Input.TabStop = False
         Me.Tx_Input.Text = resources.GetString("Tx_Input.Text")
@@ -72,10 +72,10 @@ Partial Class Frm_Main
         Me.GroupBox2.Controls.Add(Me.Ch_DisplayName)
         Me.GroupBox2.Controls.Add(Me.Tx_EmpNumEmail)
         Me.GroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.GroupBox2.Location = New System.Drawing.Point(302, 1)
-        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(0)
+        Me.GroupBox2.Location = New System.Drawing.Point(277, 1)
+        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(1, 0, 0, 0)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(381, 432)
+        Me.GroupBox2.Size = New System.Drawing.Size(406, 432)
         Me.GroupBox2.TabIndex = 1
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Output: Emp ID/Email"
@@ -83,7 +83,7 @@ Partial Class Frm_Main
         'Ch_DisplayName
         '
         Me.Ch_DisplayName.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Ch_DisplayName.Location = New System.Drawing.Point(248, 0)
+        Me.Ch_DisplayName.Location = New System.Drawing.Point(274, 0)
         Me.Ch_DisplayName.Margin = New System.Windows.Forms.Padding(0)
         Me.Ch_DisplayName.Name = "Ch_DisplayName"
         Me.Ch_DisplayName.Size = New System.Drawing.Size(130, 19)
@@ -106,7 +106,7 @@ Partial Class Frm_Main
         Me.Tx_EmpNumEmail.Name = "Tx_EmpNumEmail"
         Me.Tx_EmpNumEmail.ReadOnly = True
         Me.Tx_EmpNumEmail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Tx_EmpNumEmail.Size = New System.Drawing.Size(375, 410)
+        Me.Tx_EmpNumEmail.Size = New System.Drawing.Size(400, 410)
         Me.Tx_EmpNumEmail.TabIndex = 2
         Me.Tx_EmpNumEmail.TabStop = False
         Me.Tx_EmpNumEmail.WordWrap = False

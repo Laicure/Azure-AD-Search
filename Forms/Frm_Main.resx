@@ -119,12 +119,11 @@
   </resheader>
   <data name="Tx_Input.Text" xml:space="preserve">
     <value>Exact Match:
-[Employee Number] (only numbers)
-[Email] (only with @)
+&lt;Employee Number&gt; (only numbers)
+&lt;Email&gt; (only with @)
 
 Partial Match:
-[Display Name] (default)
-Read format is &lt;LastName&gt;, &lt;FirstName&gt;
+&lt;LastName&gt;, &lt;FirstName&gt; (default)
 
 wildcard value: *
 
