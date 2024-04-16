@@ -102,12 +102,11 @@ Public Class Frm_Main
 							Case 1
 								.Filter = "employeeNumber=" & strx
 								.PropertiesToLoad.Add("mail")
-								If addDisplayName Then .PropertiesToLoad.Add("displayName")
+								If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
 							Case 2
 								.Filter = "mail=" & strx
 								.PropertiesToLoad.Add("employeeNumber")
-								If addDisplayName Then .PropertiesToLoad.Add("displayName")
-
+								If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
 							Case 3
 								.Filter = "displayName=" & strx & "*"
 								.PropertiesToLoad.AddRange({"employeeNumber", "mail"})
@@ -116,8 +115,10 @@ Public Class Frm_Main
 						Dim resul As SearchResult = .FindOne
 						If Not IsNothing(resul) Then
 							Dim user As DirectoryEntry = resul.GetDirectoryEntry
-							Dim displayName As String = user.Properties("displayName").Value.ToString
-							displayName = IIf(displayName.Contains("@"), displayName.Substring(0, displayName.IndexOf("@")), displayName).ToString.Trim
+							Dim displayName As String = "-"
+
+							If addDisplayName Then displayName = user.Properties("sn").Value.ToString() & ", " & user.Properties("givenname").Value.ToString()
+
 							Select Case byWhat
 								Case 1
 									outputLines.Add(user.Properties("mail").Value.ToString.ToLowerInvariant & IIf(addDisplayName, " | " & displayName, "").ToString)
