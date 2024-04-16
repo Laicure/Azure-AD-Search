@@ -3,6 +3,8 @@ Imports System.Globalization
 
 Public Class Frm_Main
 
+#Region "Init"
+
 	Dim inputLines As New List(Of String)
 	Dim outputLines As New List(Of String)
 	Dim errx() As String = {}
@@ -10,6 +12,11 @@ Public Class Frm_Main
 	Dim glob As CultureInfo = CultureInfo.InvariantCulture
 
 	Dim reInputValid As Boolean = False
+	Dim addDisplayName As Boolean = False
+
+#End Region
+
+#Region "Form"
 
 	Private Sub Frm_Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		With Me
@@ -23,10 +30,14 @@ Public Class Frm_Main
 		If MessageBox.Show("Are you sure to close the Azure AD Search app?", "Close?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then e.Cancel = True
 	End Sub
 
+#End Region
+
+#Region "Controls"
+
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
 		If reInputValid Then Exit Sub
 
-		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x, Nothing) OrElse x.Contains("@")).Select(Function(x) x.Replace(" ", "")).ToList
+		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).ToList
 		With Lb_Generate
 			.Enabled = Not inputLines.Count = 0
 			.Text = "Search Counterpart"
@@ -44,16 +55,21 @@ Public Class Frm_Main
 			End With
 			reInputValid = False
 
-			Tx_Output.Clear()
+			Tx_EmpNumEmail.Clear()
+			Ch_DisplayName.Enabled = False
 			With Lb_Generate
 				.Enabled = False
 				.Text = "Searching..."
 			End With
 
+			addDisplayName = Ch_DisplayName.Checked
+
 			Bg_LDAP.RunWorkerAsync()
 		End If
 
 	End Sub
+
+#End Region
 
 #Region "Background Worker"
 
@@ -70,26 +86,46 @@ Public Class Frm_Main
 						Lb_Generate.Text = "Searching " & (currentLine + 1).ToString("#,0", glob) & "/" & inputLinesCount.ToString("#,0", glob)
 					End Sub, MethodInvoker))
 
-				Dim strx As String = inputLines(currentLine)
+				Dim strx As String = inputLines(currentLine).Trim
+				Dim byWhat As Integer = 0 '1=empnum,2=email,3=name
+				If Int64.TryParse(strx, Nothing) Then
+					byWhat = 1
+				ElseIf strx.Contains("@") Then
+					byWhat = 2
+				Else
+					byWhat = 3
+				End If
+
 				Using adSearcher As New DirectorySearcher
 					With adSearcher
-						If Int64.TryParse(strx, Nothing) Then
-							.Filter = "employeeNumber=" & strx
-							.PropertiesToLoad.Add("mail")
-						Else
-							.Filter = "mail=" & strx
-							.PropertiesToLoad.Add("employeeNumber")
-						End If
+						Select Case byWhat
+							Case 1
+								.Filter = "employeeNumber=" & strx
+								.PropertiesToLoad.Add("mail")
+								If addDisplayName Then .PropertiesToLoad.Add("displayName")
+							Case 2
+								.Filter = "mail=" & strx
+								.PropertiesToLoad.Add("employeeNumber")
+								If addDisplayName Then .PropertiesToLoad.Add("displayName")
+
+							Case 3
+								.Filter = "displayName=" & strx & "*"
+								.PropertiesToLoad.AddRange({"employeeNumber", "mail"})
+						End Select
 
 						Dim resul As SearchResult = .FindOne
 						If Not IsNothing(resul) Then
 							Dim user As DirectoryEntry = resul.GetDirectoryEntry
-
-							If Int64.TryParse(strx, Nothing) Then
-								outputLines.Add(user.Properties("mail").Value.ToString.ToLowerInvariant)
-							Else
-								outputLines.Add(user.Properties("employeeNumber").Value.ToString)
-							End If
+							Dim displayName As String = user.Properties("displayName").Value.ToString
+							displayName = IIf(displayName.Contains("@"), displayName.Substring(0, displayName.IndexOf("@")), displayName).ToString.Trim
+							Select Case byWhat
+								Case 1
+									outputLines.Add(user.Properties("mail").Value.ToString.ToLowerInvariant & IIf(addDisplayName, " | " & displayName, "").ToString)
+								Case 2
+									outputLines.Add(user.Properties("employeeNumber").Value.ToString & IIf(addDisplayName, " | " & displayName, "").ToString)
+								Case 3
+									outputLines.Add(user.Properties("employeeNumber").Value.ToString & " | " & user.Properties("mail").Value.ToString.ToLowerInvariant)
+							End Select
 						Else
 							outputLines.Add("-")
 						End If
@@ -127,15 +163,16 @@ Public Class Frm_Main
 			Lb_Generate.Text = "Error @ " & timeCompleted
 			MessageBox.Show(errx(0), errx(1), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
 		Else
-			Tx_Output.Lines = outputLines.ToArray
+			Tx_EmpNumEmail.Lines = outputLines.ToArray
 			Lb_Generate.Text = "Done @ " & timeCompleted
 
-			MessageBox.Show("Took " & timeCompleted, "Successfully Generated!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+			'MessageBox.Show("Took " & timeCompleted, "Successfully Generated!", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-			Tx_Output.Focus()
+			Tx_EmpNumEmail.Focus()
 		End If
 
 		Tx_Input.ReadOnly = False
+		Ch_DisplayName.Enabled = True
 		Lb_Generate.Enabled = True
 
 		With outputLines

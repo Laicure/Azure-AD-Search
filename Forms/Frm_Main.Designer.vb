@@ -22,37 +22,36 @@ Partial Class Frm_Main
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.Tx_Input = New System.Windows.Forms.TextBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.Tx_Output = New System.Windows.Forms.TextBox()
-        Me.Lb_Generate = New System.Windows.Forms.Label()
+        Me.Tx_EmpNumEmail = New System.Windows.Forms.TextBox()
         Me.Bg_LDAP = New System.ComponentModel.BackgroundWorker()
+        Me.Lb_Generate = New System.Windows.Forms.Label()
+        Me.Tipper = New System.Windows.Forms.ToolTip(Me.components)
+        Me.Ch_DisplayName = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.Lb_Generate)
         Me.GroupBox1.Controls.Add(Me.Tx_Input)
-        Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Left
         Me.GroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.GroupBox1.Location = New System.Drawing.Point(1, 1)
         Me.GroupBox1.Margin = New System.Windows.Forms.Padding(0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(300, 459)
+        Me.GroupBox1.Size = New System.Drawing.Size(300, 432)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
-        Me.GroupBox1.Text = "Input - Emp ID or Email per line"
+        Me.GroupBox1.Text = "Input: Emp ID/Email or Display Name"
         '
         'Tx_Input
         '
-        Me.Tx_Input.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Tx_Input.BackColor = System.Drawing.Color.White
         Me.Tx_Input.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Tx_Input.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Tx_Input.ForeColor = System.Drawing.Color.Black
         Me.Tx_Input.Location = New System.Drawing.Point(3, 19)
         Me.Tx_Input.Margin = New System.Windows.Forms.Padding(0, 0, 0, 1)
@@ -60,9 +59,11 @@ Partial Class Frm_Main
         Me.Tx_Input.Multiline = True
         Me.Tx_Input.Name = "Tx_Input"
         Me.Tx_Input.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Tx_Input.Size = New System.Drawing.Size(294, 413)
+        Me.Tx_Input.Size = New System.Drawing.Size(294, 410)
         Me.Tx_Input.TabIndex = 1
         Me.Tx_Input.TabStop = False
+        Me.Tipper.SetToolTip(Me.Tx_Input, "Employee Number (lines with only numbers)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Email (lines with @)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Display Name (fa" &
+        "llback to this; use * for wildcard)")
         Me.Tx_Input.WordWrap = False
         '
         'GroupBox2
@@ -70,32 +71,37 @@ Partial Class Frm_Main
         Me.GroupBox2.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.GroupBox2.Controls.Add(Me.Tx_Output)
+        Me.GroupBox2.Controls.Add(Me.Ch_DisplayName)
+        Me.GroupBox2.Controls.Add(Me.Tx_EmpNumEmail)
         Me.GroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.GroupBox2.Location = New System.Drawing.Point(302, 1)
         Me.GroupBox2.Margin = New System.Windows.Forms.Padding(0)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(381, 459)
+        Me.GroupBox2.Size = New System.Drawing.Size(381, 432)
         Me.GroupBox2.TabIndex = 1
         Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "Output"
+        Me.GroupBox2.Text = "Output: Emp ID/Email"
         '
-        'Tx_Output
+        'Tx_EmpNumEmail
         '
-        Me.Tx_Output.BackColor = System.Drawing.Color.White
-        Me.Tx_Output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Tx_Output.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Tx_Output.ForeColor = System.Drawing.Color.Black
-        Me.Tx_Output.Location = New System.Drawing.Point(3, 19)
-        Me.Tx_Output.MaxLength = 0
-        Me.Tx_Output.Multiline = True
-        Me.Tx_Output.Name = "Tx_Output"
-        Me.Tx_Output.ReadOnly = True
-        Me.Tx_Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Tx_Output.Size = New System.Drawing.Size(375, 437)
-        Me.Tx_Output.TabIndex = 2
-        Me.Tx_Output.TabStop = False
-        Me.Tx_Output.WordWrap = False
+        Me.Tx_EmpNumEmail.BackColor = System.Drawing.Color.White
+        Me.Tx_EmpNumEmail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Tx_EmpNumEmail.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Tx_EmpNumEmail.ForeColor = System.Drawing.Color.Black
+        Me.Tx_EmpNumEmail.Location = New System.Drawing.Point(3, 19)
+        Me.Tx_EmpNumEmail.Margin = New System.Windows.Forms.Padding(0, 0, 0, 1)
+        Me.Tx_EmpNumEmail.MaxLength = 0
+        Me.Tx_EmpNumEmail.Multiline = True
+        Me.Tx_EmpNumEmail.Name = "Tx_EmpNumEmail"
+        Me.Tx_EmpNumEmail.ReadOnly = True
+        Me.Tx_EmpNumEmail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.Tx_EmpNumEmail.Size = New System.Drawing.Size(375, 410)
+        Me.Tx_EmpNumEmail.TabIndex = 2
+        Me.Tx_EmpNumEmail.TabStop = False
+        Me.Tx_EmpNumEmail.WordWrap = False
+        '
+        'Bg_LDAP
+        '
         '
         'Lb_Generate
         '
@@ -105,16 +111,38 @@ Partial Class Frm_Main
         Me.Lb_Generate.Enabled = False
         Me.Lb_Generate.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Lb_Generate.ForeColor = System.Drawing.Color.Blue
-        Me.Lb_Generate.Location = New System.Drawing.Point(3, 433)
+        Me.Lb_Generate.Location = New System.Drawing.Point(1, 437)
         Me.Lb_Generate.Margin = New System.Windows.Forms.Padding(0)
         Me.Lb_Generate.Name = "Lb_Generate"
-        Me.Lb_Generate.Size = New System.Drawing.Size(294, 23)
-        Me.Lb_Generate.TabIndex = 3
+        Me.Lb_Generate.Size = New System.Drawing.Size(682, 23)
+        Me.Lb_Generate.TabIndex = 5
         Me.Lb_Generate.Text = "Search Counterpart"
         Me.Lb_Generate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'Bg_LDAP
+        'Tipper
         '
+        Me.Tipper.AutomaticDelay = 100
+        Me.Tipper.AutoPopDelay = 7777
+        Me.Tipper.BackColor = System.Drawing.Color.White
+        Me.Tipper.ForeColor = System.Drawing.Color.Black
+        Me.Tipper.InitialDelay = 100
+        Me.Tipper.IsBalloon = True
+        Me.Tipper.ReshowDelay = 100
+        Me.Tipper.UseAnimation = False
+        Me.Tipper.UseFading = False
+        '
+        'Ch_DisplayName
+        '
+        Me.Ch_DisplayName.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.Ch_DisplayName.Location = New System.Drawing.Point(248, 0)
+        Me.Ch_DisplayName.Margin = New System.Windows.Forms.Padding(0)
+        Me.Ch_DisplayName.Name = "Ch_DisplayName"
+        Me.Ch_DisplayName.Size = New System.Drawing.Size(130, 19)
+        Me.Ch_DisplayName.TabIndex = 3
+        Me.Ch_DisplayName.TabStop = False
+        Me.Ch_DisplayName.Text = "Add DisplayName"
+        Me.Ch_DisplayName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.Ch_DisplayName.UseVisualStyleBackColor = True
         '
         'Frm_Main
         '
@@ -122,6 +150,7 @@ Partial Class Frm_Main
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.ClientSize = New System.Drawing.Size(684, 461)
+        Me.Controls.Add(Me.Lb_Generate)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
         Me.DoubleBuffered = True
@@ -147,7 +176,9 @@ Partial Class Frm_Main
     Friend WithEvents GroupBox1 As GroupBox
     Friend WithEvents Tx_Input As TextBox
     Friend WithEvents GroupBox2 As GroupBox
-    Friend WithEvents Tx_Output As TextBox
-    Friend WithEvents Lb_Generate As Label
+    Friend WithEvents Tx_EmpNumEmail As TextBox
     Friend WithEvents Bg_LDAP As System.ComponentModel.BackgroundWorker
+    Friend WithEvents Lb_Generate As Label
+    Friend WithEvents Tipper As ToolTip
+    Friend WithEvents Ch_DisplayName As CheckBox
 End Class
