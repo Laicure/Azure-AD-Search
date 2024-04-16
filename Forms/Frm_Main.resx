@@ -117,23 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="Tipper.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>119, 17</value>
-  </metadata>
-  <data name="Tx_Input.ToolTip" xml:space="preserve">
+  <data name="Tx_Input.Text" xml:space="preserve">
     <value>Exact Match:
-Employee Number (lines with only numbers)
-Email (lines with @)
+[Employee Number] (only numbers)
+[Email] (only with @)
 
 Partial Match:
-Display Name (fallback to this)
+[Display Name] (default)
+Read format is &lt;LastName&gt;, &lt;FirstName&gt;
 
-wildcard: *
+wildcard value: *
 
-Note:
-Display Names mostly has the suffix of "@ SomePlace"
-like "LastName, FirstName @ Location"
-so you might want to use a suffix wildcard</value>
+Sample:
+123456
+someone@company.com
+lastname, firstname*
+lastname*</value>
   </data>
   <metadata name="Bg_LDAP.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

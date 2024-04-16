@@ -34,6 +34,10 @@ Public Class Frm_Main
 
 #Region "Controls"
 
+	Private Sub Tx_Input_Enter(sender As Object, e As EventArgs) Handles Tx_Input.Enter
+		If Tx_Input.Text.StartsWith("Exact Match:") Then Tx_Input.Clear()
+	End Sub
+
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
 		If reInputValid Then Exit Sub
 
