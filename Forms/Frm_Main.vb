@@ -49,7 +49,7 @@ Public Class Frm_Main
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
 		If reInputValid Then Exit Sub
 
-		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).Select(Function(x) x.ToLowerInvariant).Distinct.ToList
+		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).Select(Function(x) x.Trim.ToLowerInvariant).Distinct.ToList
 		With Lb_Generate
 			.Enabled = Not inputLines.Count = 0
 			.Text = "Search Counterpart"
