@@ -69,6 +69,9 @@ Public Class Frm_Main
 
 			Tx_EmpNumEmail.Clear()
 			Ch_DisplayName.Enabled = False
+			Ch_ManagerEmail.Enabled = False
+			Ch_EmpID.Enabled = False
+			Ch_EmpEmail.Enabled = False
 			With Lb_Generate
 				.Enabled = False
 				.Text = "Searching... (" & startExec.ToString("HH:mm:ss", glob) & ") @ " & inputLines.Count.ToString("#,0", glob) & " lines"
@@ -198,6 +201,9 @@ Public Class Frm_Main
 
 		Tx_Input.ReadOnly = False
 		Ch_DisplayName.Enabled = True
+		Ch_ManagerEmail.Enabled = True
+		Ch_EmpID.Enabled = True
+		Ch_EmpEmail.Enabled = True
 		Lb_Generate.Enabled = True
 
 		With outputLines
