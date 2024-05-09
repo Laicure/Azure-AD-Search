@@ -8,11 +8,14 @@ Public Class Frm_Main
 	Dim inputLines As New List(Of String)
 	Dim outputLines As New List(Of String)
 	Dim errx() As String = {}
-	Dim startExec As DateTime = DateTime.UtcNow
+	Dim startExec As DateTime = DateTime.Now
 	Dim glob As CultureInfo = CultureInfo.InvariantCulture
 
 	Dim reInputValid As Boolean = False
 	Dim addDisplayName As Boolean = False
+	Dim addManagerEmail As Boolean = False
+	Dim addEmployeeID As Boolean = False
+	Dim addEmployeeEmail As Boolean = False
 	Dim breakState As Boolean = False
 
 #End Region
@@ -46,7 +49,7 @@ Public Class Frm_Main
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
 		If reInputValid Then Exit Sub
 
-		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).ToList
+		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).Select(Function(x) x.ToLowerInvariant).Distinct.ToList
 		With Lb_Generate
 			.Enabled = Not inputLines.Count = 0
 			.Text = "Search Counterpart"
@@ -55,7 +58,7 @@ Public Class Frm_Main
 
 	Private Sub Lb_Generate_Click(sender As Object, e As EventArgs) Handles Lb_Generate.Click
 		If Not Bg_LDAP.IsBusy Then
-			startExec = DateTime.UtcNow
+			startExec = DateTime.Now
 
 			reInputValid = True
 			With Tx_Input
@@ -72,6 +75,9 @@ Public Class Frm_Main
 			End With
 
 			addDisplayName = Ch_DisplayName.Checked
+			addManagerEmail = Ch_ManagerEmail.Checked
+			addEmployeeID = Ch_EmpID.Checked
+			addEmployeeEmail = Ch_EmpEmail.Checked
 
 			Bg_LDAP.RunWorkerAsync()
 		End If
@@ -108,31 +114,62 @@ Public Class Frm_Main
 							Select Case byWhat
 								Case 1
 									.Filter = "employeeNumber=" & strx
-									.PropertiesToLoad.Add("mail")
+									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
+									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
 								Case 2
 									.Filter = "mail=" & strx
-									.PropertiesToLoad.Add("employeeNumber")
+									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
+									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
 								Case 3
 									.Filter = "displayName=" & strx & "*"
-									.PropertiesToLoad.AddRange({"employeeNumber", "mail"})
+									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
+									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
+									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
 							End Select
 
 							Dim resul As SearchResult = .FindOne
 							If Not IsNothing(resul) Then
 								Dim user As DirectoryEntry = resul.GetDirectoryEntry
+
+								Dim sn As Object = user.Properties("sn").Value
+								Dim givenName As Object = user.Properties("givenname").Value
+								Dim manager As Object = user.Properties("manager").Value
+								Dim empNumber As Object = user.Properties("employeeNumber").Value
+								Dim mailObj As Object = user.Properties("mail").Value
+
 								Dim displayName As String = "-"
+								Dim managerEmail As String = "-"
 
-								If addDisplayName Then displayName = user.Properties("sn").Value.ToString() & ", " & user.Properties("givenname").Value.ToString()
+								If addDisplayName Then displayName = IIf(sn Is Nothing, "-", sn).ToString & ", " & IIf(givenName Is Nothing, "-", givenName).ToString
+								If addManagerEmail Then
+									managerEmail = IIf(manager Is Nothing, "-", manager.ToString.Replace("\", "")).ToString
+									managerEmail = IIf(managerEmail.Contains("@"), managerEmail.Substring(managerEmail.IndexOf("=") + 1, Convert.ToInt32(IIf(managerEmail.Contains("@"), managerEmail.IndexOf("@") - 4, managerEmail.IndexOf(",OU") - 3))), managerEmail).ToString
+								End If
 
-								Select Case byWhat
+								Select Case byWhat '1=empnum,2=email,3=name
 									Case 1
-										outputLines.Add(user.Properties("employeeNumber").Value.ToString & " | " & user.Properties("mail").Value.ToString.ToLowerInvariant & IIf(addDisplayName, " | " & displayName, "").ToString)
+										outputLines.Add(
+											IIf(empNumber Is Nothing, "-", empNumber).ToString &
+											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
+											IIf(addDisplayName, " | " & displayName, "").ToString &
+											IIf(addManagerEmail, " | " & managerEmail, "").ToString
+											)
 									Case 2
-										outputLines.Add(user.Properties("mail").Value.ToString.ToLowerInvariant & " | " & user.Properties("employeeNumber").Value.ToString & IIf(addDisplayName, " | " & displayName, "").ToString)
+										outputLines.Add(
+											mailObj.ToString.ToLowerInvariant &
+											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
+											IIf(addDisplayName, " | " & displayName, "").ToString &
+											IIf(addManagerEmail, " | " & managerEmail, "").ToString
+											)
 									Case 3
-										outputLines.Add(displayName & " | " & user.Properties("employeeNumber").Value.ToString & " | " & user.Properties("mail").Value.ToString.ToLowerInvariant)
+										outputLines.Add(
+											displayName &
+											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
+											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
+											IIf(addManagerEmail, " | " & managerEmail, "").ToString()
+											)
 								End Select
 							Else
 								outputLines.Add(strx)
@@ -148,7 +185,7 @@ Public Class Frm_Main
 	End Sub
 
 	Private Sub Bg_LDAP_RunWorkerCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles Bg_LDAP.RunWorkerCompleted
-		Dim timeCompleted As String = Microsoft.VisualBasic.Left(DateTime.UtcNow.Subtract(startExec).ToString, 11)
+		Dim timeCompleted As String = Microsoft.VisualBasic.Left(DateTime.Now.Subtract(startExec).ToString, 11)
 		If errx.Count = 2 Then
 			Lb_Generate.Text = "Error @ " & timeCompleted & " (" & inputLines.Count.ToString("#,0", glob) & " lines)"
 			MessageBox.Show(errx(0), errx(1), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -168,6 +205,7 @@ Public Class Frm_Main
 			.TrimExcess()
 		End With
 	End Sub
+
 
 #End Region
 
