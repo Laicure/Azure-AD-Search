@@ -126,7 +126,7 @@ Public Class Frm_Main
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
 									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
 								Case 3
-									.Filter = "displayName=" & strx & "*"
+									.Filter = "displayName=" & strx
 									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
 									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
 									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
@@ -145,7 +145,7 @@ Public Class Frm_Main
 								Dim displayName As String = "-"
 								Dim managerEmail As String = "-"
 
-								If addDisplayName Then displayName = IIf(sn Is Nothing, "-", sn).ToString & ", " & IIf(givenName Is Nothing, "-", givenName).ToString
+								If addDisplayName Or byWhat = 3 Then displayName = IIf(sn Is Nothing, "-", sn).ToString & ", " & IIf(givenName Is Nothing, "-", givenName).ToString
 								If addManagerEmail Then
 									managerEmail = IIf(manager Is Nothing, "-", manager.ToString.Replace("\", "")).ToString
 									managerEmail = IIf(managerEmail.Contains("@"), managerEmail.Substring(managerEmail.IndexOf("=") + 1, Convert.ToInt32(IIf(managerEmail.Contains("@"), managerEmail.IndexOf("@") - 4, managerEmail.IndexOf(",OU") - 3))), managerEmail).ToString
@@ -211,7 +211,6 @@ Public Class Frm_Main
 			.TrimExcess()
 		End With
 	End Sub
-
 
 #End Region
 
