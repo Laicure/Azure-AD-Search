@@ -126,7 +126,7 @@ Public Class Frm_Main
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
 									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
 								Case 3
-									.Filter = "displayName=" & strx
+									.Filter = "displayName=" & strx & "*"
 									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
 									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
 									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
