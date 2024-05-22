@@ -13,7 +13,7 @@ Public Class Frm_Main
 
 	Dim reInputValid As Boolean = False
 	Dim addDisplayName As Boolean = False
-	Dim addManagerEmail As Boolean = False
+	Dim addmanagerName As Boolean = False
 	Dim addEmployeeID As Boolean = False
 	Dim addEmployeeEmail As Boolean = False
 	Dim breakState As Boolean = False
@@ -78,7 +78,7 @@ Public Class Frm_Main
 			End With
 
 			addDisplayName = Ch_DisplayName.Checked
-			addManagerEmail = Ch_ManagerEmail.Checked
+			addmanagerName = Ch_ManagerEmail.Checked
 			addEmployeeID = Ch_EmpID.Checked
 			addEmployeeEmail = Ch_EmpEmail.Checked
 
@@ -119,17 +119,17 @@ Public Class Frm_Main
 									.Filter = "employeeNumber=" & strx
 									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
-									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
+									If addmanagerName Then .PropertiesToLoad.AddRange({"manager"})
 								Case 2
 									.Filter = "mail=" & strx
 									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
 									If addDisplayName Then .PropertiesToLoad.AddRange({"givenname", "sn"})
-									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
+									If addmanagerName Then .PropertiesToLoad.AddRange({"manager"})
 								Case 3
 									.Filter = "displayName=" & strx & "*"
 									If addEmployeeID Then .PropertiesToLoad.Add("employeeNumber")
 									If addEmployeeEmail Then .PropertiesToLoad.Add("mail")
-									If addManagerEmail Then .PropertiesToLoad.AddRange({"manager"})
+									If addmanagerName Then .PropertiesToLoad.AddRange({"manager"})
 							End Select
 
 							Dim resul As SearchResult = .FindOne
@@ -143,12 +143,27 @@ Public Class Frm_Main
 								Dim mailObj As Object = user.Properties("mail").Value
 
 								Dim displayName As String = "-"
-								Dim managerEmail As String = "-"
+
+								Dim managerEmail As Object = Nothing
 
 								If addDisplayName Or byWhat = 3 Then displayName = IIf(sn Is Nothing, "-", sn).ToString & ", " & IIf(givenName Is Nothing, "-", givenName).ToString
-								If addManagerEmail Then
-									managerEmail = IIf(manager Is Nothing, "-", manager.ToString.Replace("\", "")).ToString
-									managerEmail = IIf(managerEmail.Contains("@"), managerEmail.Substring(managerEmail.IndexOf("=") + 1, Convert.ToInt32(IIf(managerEmail.Contains("@"), managerEmail.IndexOf("@") - 4, managerEmail.IndexOf(",OU") - 3))), managerEmail).ToString
+
+								If addmanagerName Then
+									Dim managerName As String = IIf(manager Is Nothing, "-", manager.ToString.Replace("\", "")).ToString
+									managerName = IIf(managerName.Contains("@"), managerName.Substring(managerName.IndexOf("=") + 1, Convert.ToInt32(IIf(managerName.Contains("@"), managerName.IndexOf("@") - 4, managerName.IndexOf(",OU") - 3))), managerName).ToString
+
+									Using adManagerSearcher As New DirectorySearcher
+										With adManagerSearcher
+											.Filter = "displayName=" & managerName & "*"
+											.PropertiesToLoad.Add("mail")
+											Dim resulManager As SearchResult = .FindOne
+											If Not IsNothing(resulManager) Then
+												Dim managerr As DirectoryEntry = resulManager.GetDirectoryEntry
+												managerEmail = managerr.Properties("mail").Value
+											End If
+										End With
+									End Using
+									If managerEmail Is Nothing Then managerEmail = "-"
 								End If
 
 								Select Case byWhat '1=empnum,2=email,3=name
@@ -157,21 +172,21 @@ Public Class Frm_Main
 											IIf(empNumber Is Nothing, "-", empNumber).ToString &
 											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
 											IIf(addDisplayName, " | " & displayName, "").ToString &
-											IIf(addManagerEmail, " | " & managerEmail, "").ToString
+											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
 											)
 									Case 2
 										outputLines.Add(
 											mailObj.ToString.ToLowerInvariant &
 											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
 											IIf(addDisplayName, " | " & displayName, "").ToString &
-											IIf(addManagerEmail, " | " & managerEmail, "").ToString
+											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
 											)
 									Case 3
 										outputLines.Add(
 											displayName &
 											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
 											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
-											IIf(addManagerEmail, " | " & managerEmail, "").ToString()
+											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString()
 											)
 								End Select
 							Else
