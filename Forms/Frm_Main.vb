@@ -5,8 +5,8 @@ Public Class Frm_Main
 
 #Region "Init"
 
-	Dim inputLines As New List(Of String)
-	Dim outputLines As New List(Of String)
+	Dim inputLines As New HashSet(Of String)
+	Dim outputLines As New HashSet(Of String)
 	Dim errx() As String = {}
 	Dim startExec As DateTime = DateTime.Now
 	Dim glob As CultureInfo = CultureInfo.InvariantCulture
@@ -49,7 +49,7 @@ Public Class Frm_Main
 	Private Sub Tx_Input_TextChanged(sender As Object, e As EventArgs) Handles Tx_Input.TextChanged
 		If reInputValid Then Exit Sub
 
-		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).Select(Function(x) x.Trim.ToLowerInvariant).Distinct.ToList
+		inputLines = Tx_Input.Lines.Where(Function(x) Int64.TryParse(x.Replace(" ", ""), Nothing) OrElse x.Replace(" ", "").Contains("@") OrElse Not String.IsNullOrWhiteSpace(x)).Select(Function(x) x.Trim.ToLowerInvariant).ToHashSet
 		With Lb_Generate
 			.Enabled = Not inputLines.Count = 0
 			.Text = "Search Counterpart"
