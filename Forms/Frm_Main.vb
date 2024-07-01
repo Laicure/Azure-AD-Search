@@ -144,7 +144,7 @@ Public Class Frm_Main
 
 								Dim displayName As String = "-"
 
-								Dim managerEmail As Object = Nothing
+								Dim managerEmail As Object = "-"
 
 								If addDisplayName Or byWhat = 3 Then displayName = IIf(sn Is Nothing, "-", sn).ToString & ", " & IIf(givenName Is Nothing, "-", givenName).ToString
 
@@ -163,31 +163,31 @@ Public Class Frm_Main
 											End If
 										End With
 									End Using
-									If managerEmail Is Nothing Then managerEmail = "-"
 								End If
 
 								Select Case byWhat '1=empnum,2=email,3=name
 									Case 1
 										outputLines.Add(
-											IIf(empNumber Is Nothing, "-", empNumber).ToString &
-											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
-											IIf(addDisplayName, " | " & displayName, "").ToString &
-											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
-											)
+											IIf(empNumber Is Nothing, "-", empNumber).ToString _
+											& IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString _
+											& IIf(addDisplayName, " | " & displayName, "").ToString _
+											& IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
+										)
 									Case 2
+										Dim managerName As String = ""
 										outputLines.Add(
-											mailObj.ToString.ToLowerInvariant &
-											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
-											IIf(addDisplayName, " | " & displayName, "").ToString &
-											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
-											)
+											mailObj.ToString.ToLowerInvariant _
+											& IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString _
+											& IIf(addDisplayName, " | " & displayName, "").ToString _
+											& IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
+										)
 									Case 3
 										outputLines.Add(
-											displayName &
-											IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString &
-											IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString &
-											IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString()
-											)
+											displayName _
+											& IIf(addEmployeeID, " | " & IIf(empNumber Is Nothing, "-", empNumber).ToString, "").ToString _
+											& IIf(addEmployeeEmail, " | " & mailObj.ToString.ToLowerInvariant, "").ToString _
+											& IIf(addmanagerName, " | " & managerEmail.ToString.ToLowerInvariant, "").ToString
+										)
 								End Select
 							Else
 								outputLines.Add(strx)
